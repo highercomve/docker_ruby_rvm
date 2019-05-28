@@ -8,7 +8,7 @@ This container is intended to be a base container for other Dockerfiles. The mot
 You could build a container if you want to use ruby from a container
 
 ```bash
-docker build --build-arg RUBY_VERSION=2.6.3 -t ruby-rvm https://github.com/highercomve/docker_ruby_rvm.git
+docker build --build-arg RUBY_VERSION=2.6.3 highercomve/ruby-rvm
 ```
 
 The default RUBY_VERSION is 2.3.8
@@ -38,3 +38,19 @@ $ docker run -it ruby-rvm gem -v
 
 ## How to use it as base for another image
 
+Rails example
+```
+# ARG RUBY_VERSION=2.6.3
+FROM highercomve/ruby-rvm
+
+COPY . .
+
+ENV RACK_ENV=prod RAILS_ENV=prod
+
+# Before running anything related to ruby first source rvm
+RUN source /etc/profile.d/rvm.sh \
+    && gem install foreman \
+    && bundle install
+
+CMD bundle exec foreman start
+```

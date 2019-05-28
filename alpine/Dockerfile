@@ -7,16 +7,26 @@ ENV RUBY_VERSION=$RUBY_VERSION LANG=C
 # Dependencies for getting/building
 RUN apk update; \
     apk add --no-cache \
-        git gnupg bash curl alpine-sdk gcc musl-dev make \
+        git gnupg bash curl alpine-sdk gcc procps musl-dev make linux-headers \
         zlib zlib-dev openssl openssl-dev sqlite-dev
 
 SHELL [ "/bin/bash", "-c"]
 
-RUN gpg2 --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB \
-    && curl -sSL https://get.rvm.io | /bin/bash -s stable
+RUN curl -sSL https://gist.github.com/ashsmith/55098099d2a5b5dfed9935dd4488abd6/raw/9113834d220fca40ed69e53c198a8891a4357d8e/ps_opt_p_enabled_for_alpine.sh -o /usr/local/bin/ps \
+  && chmod 755 /usr/local/bin/ps
 
-RUN source /etc/profile.d/rvm.sh \
-    && rvm install $RUBY_VERSION \
+RUN curl -sSL https://github.com/rvm/rvm/archive/stable.tar.gz -o rvm-stable.tar.gz \
+    && echo 'export rvm_prefix="$HOME"' > /root/.rvmrc \
+    && echo 'export rvm_path="$HOME/.rvm"' >> /root/.rvmrc \
+    && mkdir rvm && cd rvm \
+    && tar -xzf ../rvm-stable.tar.gz \
+    && cd rvm-stable \
+    && ./scripts/install \
+    && cd ../../ \
+    && rm -rf stable.tar.gz rvm
+
+RUN source /root/.rvm/scripts/rvm \
+    && rvm install --disable-binary --autolibs=0 $RUBY_VERSION \
     && rvm use $RUBY_VERSION --default \
     && rvm rubygems current \
     && gem install bundler

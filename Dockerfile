@@ -27,6 +27,6 @@ COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 RUN chmod 755 /usr/local/bin/docker-entrypoint.sh
 
-RUN apt-get update && apt autoremove -y && rm -rf /var/cache/apt/archives
+RUN apt-get update && apt-get autoremove -y && rm -rf /var/cache/apt/archives
 
 ENTRYPOINT ["docker-entrypoint.sh"]

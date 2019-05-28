@@ -52,5 +52,5 @@ RUN source /etc/profile.d/rvm.sh \
     && gem install foreman \
     && bundle install
 
-CMD bundle exec foreman start
+CMD ["foreman", "start"]
 ```
